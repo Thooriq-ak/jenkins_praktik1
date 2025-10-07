@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.10'
+            args '-u root'
+        }
+    }
 
     stages {
         stage('Install Dependencies') {
@@ -31,7 +36,7 @@ pipeline {
         success {
             script {
                 def payload = [
-                    content: "✅ Build SUCCESS on `${env.BRANCH_NAME}`\n🔗 URL: ${env.BUILD_URL}"
+                    content: "✅ Build SUCCESS on `${env.BRANCH_NAME}`\n🔗URL: ${env.BUILD_URL}"
                 ]
                 httpRequest(
                     httpMode: 'POST',
@@ -45,7 +50,7 @@ pipeline {
         failure {
             script {
                 def payload = [
-                    content: "❌ Build FAILED on `${env.BRANCH_NAME}`\n🔗 URL: ${env.BUILD_URL}"
+                    content: "❌ Build FAILED on `${env.BRANCH_NAME}`\n🔗URL: ${env.BUILD_URL}"
                 ]
                 httpRequest(
                     httpMode: 'POST',
